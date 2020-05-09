@@ -1,0 +1,32 @@
+{
+  "name": "izigma-blockchain",
+  "version": "1.1.2",
+  "description": "This is a blockchain freamwork to build blockchain networks",
+  "main": "\t",
+  "scripts": {
+    "test": "jest --watchAll",
+    "prepublish": "jest --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chamikaravinda/izigma-blockchain.git"
+  },
+  "keywords": [
+    "izigma",
+    "blockchain"
+  ],
+  "author": "Chamika Ravinda <chamikaravinda@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chamikaravinda/izigma-blockchain/issues"
+  },
+  "homepage": "https://github.com/chamikaravinda/izigma-blockchain#readme",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "csv-parser": "^2.3.2",
+    "csv-write-stream": "^2.0.0"
+  }
+}
