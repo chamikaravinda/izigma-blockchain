@@ -1,6 +1,38 @@
+Read Me 
 # izigma-blockchain
 
-This is a blochain framework to use with node servers 
+This is a blockchain framework to use with node servers 
+
+### configuration 
+
+To use or test this library you need to add a configuration
+file.
+
+STEP 1 : Run the following command relevant to your 
+operating system in the project directory
+
+    windows :
+    ```
+    echo > izigma-config.js
+    ```
+
+    Linux :
+    ```
+    touch izigma-config.js
+    ```
+STEP 2 : Past the following code in the created file 
+
+    ```
+    const DIFFICULTY = 4;
+    const MINE_RATE = 3000;
+
+    module.exports = { DIFFICULTY,MINE_RATE };
+    
+    ```
+
+    Here the DIFFICULTY attribute is the initial difficulty for the proof of work consesus.
+
+    MINE_RATE is the how often a block is created in the mine in mille seconds  
 
 ### Example Code 
 
@@ -8,7 +40,6 @@ This is a blochain framework to use with node servers
 const bodyParser = require('body-parser');
 const Blockchain = require('izigma-blockchain');
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
-
 
 const app =  express();
 let chain = new Blockchain();
@@ -36,3 +67,9 @@ app.listen(HTTP_PORT, async () => {
     console.log(`Listeing on port ${HTTP_PORT}`);
 });             
 ```
+ 
+
+
+ 
+
+

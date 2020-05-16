@@ -10,9 +10,11 @@ class BlockchainFileWriter{
       try{
         
         const data = {
-            hash: block.hash,
-            lastHash: block.lastHash,
-            timestamp: block.timestamp,
+            hash : block.hash,
+            lastHash : block.lastHash,
+            timestamp : block.timestamp,
+            nonce : block.nonce,
+            difficulty : block.difficulty,
             data: block.data
         }
         
@@ -31,11 +33,13 @@ class BlockchainFileWriter{
           try{
             
             const data = {
-                hash: block.hash,
-                lastHash: block.lastHash,
-                timestamp: block.timestamp,
-                data: block.data
-            }
+              hash : block.hash,
+              lastHash : block.lastHash,
+              timestamp : block.timestamp,
+              nonce : block.nonce,
+              difficulty : block.difficulty,
+              data: block.data
+          }
             
             var writer = csvWriter({sendHeaders: false})            
             writer.pipe(fs.createWriteStream('blockchain.csv', {flags: 'a'}))
