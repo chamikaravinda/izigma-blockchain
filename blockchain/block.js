@@ -1,6 +1,5 @@
 const SHA256 = require('crypto-js/sha256');
-const  {DIFFICULTY,MINE_RATE} = require('../../izigma-config');
-
+const  {DIFFICULTY,MINE_RATE} = require('../../../izigma-config');
 
 class Block{
     constructor(timestamp,lastHash,hash,data,nonce,difficulty){
