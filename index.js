@@ -24,7 +24,7 @@ class IzigmaBlockchain{
     }
 
     isValidChain(chain){
-        this.chain.isValidChain();
+        this.chain.isValidChain(chain);
     }
 
     replaceChain(newChain){

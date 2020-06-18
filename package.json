@@ -1,11 +1,15 @@
 {
   "name": "izigma-blockchain",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "This is a blockchain freamwork to build blockchain networks",
   "main": "\t",
   "scripts": {
     "test": "jest --watchAll",
-    "prepublish": "jest --watchAll"
+    "prepublish": "jest --watchAll",
+    "dev-test": "nodemon dev-test.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -22,11 +26,13 @@
   },
   "homepage": "https://github.com/chamikaravinda/izigma-blockchain#readme",
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "nodemon": "^2.0.2"
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
     "csv-parser": "^2.3.2",
-    "csv-write-stream": "^2.0.0"
+    "csv-write-stream": "^2.0.0",
+    "elliptic": "^6.5.2"
   }
 }

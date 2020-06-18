@@ -25,7 +25,7 @@ STEP 2 : Past the following code in the created file
     ```
     const DIFFICULTY = 4;
     const MINE_RATE = 3000;
-
+    const INITIIAL_BALANCE = 10;
     module.exports = { DIFFICULTY,MINE_RATE };
     
     ```
