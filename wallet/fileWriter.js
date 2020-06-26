@@ -1,57 +1,63 @@
 const fs = require("fs");
-const ChainUtil =  require('../chain-util');
+const crypto = require("crypto")
 const {WALLET_FILE} = require('../common-constant');
 
 
 class WalletFileWriter{
 
-    async readFromWallet(){
-        let data=await fs.readFileSync(WALLET_FILE, 'utf8', function(err) {
-            if(err){
-                if (err.code === 'ENOENT') {
-                    console.log('Create the wallet to read the wallet data...');
-                }else{
-                    console.log('Error in retriving the wallet data...');
-                }
-            }
-        });
-       
-        let walletData = JSON.parse(data);
-        return walletData; 
-    }
-
-    async writeToWallet(){
-        let  isExsiste =await fs.existsSync(WALLET_FILE,(err)=>{
+    async isExsiste(){
+        let  isExsiste = await fs.existsSync(WALLET_FILE,(err)=>{
             if(err){
                 console.log('Error in creating the wallet.Please try again...');
                 throw err;
             }
         }); 
+        return isExsiste;
+    }
 
-        if(!isExsiste){
-
-            let keyPair=ChainUtil.genKeyPair();
-            let publicKey=keyPair.getPublic().encode('hex');
-            
-            let data = {
-                keyPair:keyPair,
-                publicKey:publicKey
+    async readFromWallet(){
+        try{
+            let data = fs.readFileSync(WALLET_FILE, 'utf8');
+            let walletData = JSON.parse(data);
+            return walletData; 
+        }catch(err){
+                if(err){
+                    if (err.code === 'ENOENT') {
+                        console.log('Create the wallet to read the wallet data...');
+                    }else{
+                        console.log('Error in retriving the wallet data...');
+                }
             }
-
-            fs.writeFile(WALLET_FILE,JSON.stringify(data,null,2),'utf8', (err) => {
-                if (err) console.log('Error in creating the wallet.Please try again...');
-            });
-       }
+        }
     }
 
-    async getKeyPair(){
-        let data = await this.readFromWallet();
-        return data.keyPair; 
-    }
-    
-    async getPublicKey(){
-        let data = await this.readFromWallet();
-        return data.publicKey; 
+    async writeToWallet(){
+        const { publicKey, privateKey }  = crypto.generateKeyPairSync("rsa", {
+            modulusLength: 2048,
+
+            publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem'
+            },
+
+            privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem',
+            cipher: 'aes-256-cbc',
+            passphrase: 'passphrase'
+            }
+        });
+                
+        let data = {
+            publicKey:publicKey,    	
+            privateKey:privateKey
+        }
+
+        await fs.writeFileSync(WALLET_FILE,JSON.stringify(data,null,2),'utf8', (err) => {
+            if (err) console.log('Error in creating the wallet.Please try again...');
+        });
+        
+        return data;
     }
 }
 

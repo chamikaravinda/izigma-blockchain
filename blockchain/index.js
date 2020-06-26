@@ -29,8 +29,10 @@ class Blockchain {
             await writer.writeGenesisBlock(block);
     }
 
-    isValidChain(chain){
-        if(JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) return false;
+    async isValidChain(chain){
+        let currentChain = await this.getChain();
+         
+        if(JSON.stringify(chain[0]) !== JSON.stringify(currentChain[0])) return false;
 
         for(let i=1;i<chain.length;i++){
             const block = chain[i];
@@ -45,8 +47,10 @@ class Blockchain {
         return true;
     }
 
-    replaceChain(newChain){
-        if(newChain.length <= this.chain.length){
+    async replaceChain(newChain){
+        let currentChain = await this.getChain();
+        
+        if(newChain.length <= currentChain.length){
             console.log('Received chain is not longer than the current chain . ');
             return;
         }else if(!this.isValidChain(newChain)){
@@ -54,8 +58,9 @@ class Blockchain {
             return;
         }
 
-        console.log('Replacing blockchain with the new chain.');
-        this.chain=newChain;
+        console.log('Replacing blockchain with the new chain...');
+
+        await writer.replaceChain(newChain);
     }
 }
 
