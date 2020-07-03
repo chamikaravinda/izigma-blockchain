@@ -20,7 +20,8 @@ class Blockchain {
     }
 
     async getChain(){
-        return await writer.readFromFile();
+        this.chain = await writer.readFromFile();
+        return this.chain;
     }
 
 

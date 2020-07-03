@@ -78,7 +78,7 @@ class BlockchainFileWriter{
     }
 
     async readFromFile(){
-      let chain = await fs.readFileSync(BLOCKCHAIN_FILE, 'utf8', function(err) {
+      let chain = await fs.readFileSync(BLOCKCHAIN_FILE, 'utf8', (err) => {
         if(err){
             if (err.code === 'ENOENT') {
                 console.log('Create the chain first...');
@@ -106,7 +106,8 @@ class BlockchainFileWriter{
         return false;
       }
     }
-
+ 
+    
 }
 
 module.exports = BlockchainFileWriter; 
