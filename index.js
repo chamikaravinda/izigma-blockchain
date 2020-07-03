@@ -60,6 +60,11 @@ class IzigmaBlockchain{
         return this.transactionPool.transactions;
     }
 
+    clearTransactionPool(){
+        return this.transactionPool.clear();
+    }
+
+    
     //Mine function
     async mine(){
         return this.mine.mine();
