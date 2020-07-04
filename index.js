@@ -8,8 +8,9 @@ class IzigmaBlockchain{
     constructor(){
           this.chain =  new Blockchain();
           this.wallet =  new Wallet();
+          this.wallet.createWallet();
           this.transactionPool =  new  TransactionPool();
-          this.mine= new Miner();
+          this.miner= new Miner(this.chain,this.transactionPool,this.wallet);
     }
 
     //Blockchain functions
@@ -67,7 +68,7 @@ class IzigmaBlockchain{
     
     //Mine function
     async mine(){
-        return this.mine.mine();
+        return this.miner.mine();
     }
 
 }
