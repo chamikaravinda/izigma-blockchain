@@ -1,7 +1,8 @@
 const Blockchain  = require('./blockchain');
 const Wallet = require('./wallet');
 const TransactionPool  = require('./wallet/transaction-pool');
-const Miner = require('./Miner/miner');
+const Miner = require('./miner/miner');
+const RecordPool = require('./wallet/record-pool');
 
 class IzigmaBlockchain{
 
@@ -10,6 +11,7 @@ class IzigmaBlockchain{
           this.wallet =  new Wallet();
           this.wallet.createWallet();
           this.transactionPool =  new  TransactionPool();
+          this.recordPool = new RecordPool();
           this.miner= new Miner(this.chain,this.transactionPool,this.wallet);
     }
 
@@ -48,6 +50,10 @@ class IzigmaBlockchain{
         return this.wallet.createTransaction(recipient,amount,this.chain,this.transactionPool);
     }
 
+    async createRecord(data){
+        return this.wallet.createRecord(data,this.recordPool);
+    }
+
     getPublicKey(){
         if(this.wallet.publicKey !== null){
             return this.wallet.publicKey;
@@ -65,10 +71,23 @@ class IzigmaBlockchain{
         return this.transactionPool.clear();
     }
 
+    //Transaction Pool Functions
+    getRecordPool(){
+        return this.recordPool.records;
+    }
+
+    clearTransactionPool(){
+        return this.recordPool.clear();
+    }
+    
     
     //Mine function
-    async mine(){
-        return this.miner.mine();
+    async mineTransactions(){
+        return this.miner.mineTransactions();
+    }
+
+    async mineRecords(){
+        return this.miner.mineRecord();
     }
 
 }

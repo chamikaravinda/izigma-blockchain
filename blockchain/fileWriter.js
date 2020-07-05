@@ -35,8 +35,16 @@ class BlockchainFileWriter{
     }
  
     async writeToFile(block){
-      await fs.readFile(BLOCKCHAIN_FILE, 'utf8', async function(err,data) {
+        const data = {
+          hash : block.hash,
+          lastHash : block.lastHash,
+          timestamp : block.timestamp,
+          nonce : block.nonce,
+          difficulty : block.difficulty,
+          data: block.data
+      }
 
+      let chain = await fs.readFileSync(BLOCKCHAIN_FILE, 'utf8', function(err) {
         if(err){
             if (err.code === 'ENOENT') {
                 console.log('Create the chain first...');
@@ -45,18 +53,17 @@ class BlockchainFileWriter{
             }
             return;
         }
-
-        let chain = JSON.parse(data);
-        chain.push(block);
-
-        await fs.writeFileSync(BLOCKCHAIN_FILE, JSON.stringify(chain,null,2), 'utf8',(err) => {
-          if (err){
-            console.log('Error in writing the block to the chain...');
-          }else{
-            console.log("Block added...");
-          }
-        });
-      });    
+      });
+      chain = JSON.parse(chain);
+      chain.push(data);
+      
+      await fs.writeFileSync(BLOCKCHAIN_FILE, JSON.stringify(chain,null,2), 'utf8',(err) => {
+        if (err){
+          console.log('Error in writing the block to the chain...');
+        }else{
+          console.log("Block added...");
+        }
+      });      
     }
 
 

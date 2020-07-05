@@ -75,7 +75,7 @@ app.post('/transact',(req,res)=>{
 });
 
 app.get('/mine-transactions',(req,res)=>{
-    const block = chain.mine();
+    const block = chain.mineTransaction();
     chain.clearTransactionPool();
     console.log(`New block added : ${block.toString()}`);
     res.redirect('/blocks');

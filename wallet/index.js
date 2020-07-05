@@ -1,6 +1,7 @@
 const FileWriter = require('./fileWriter');
-const Transaction = require('./transaction')
-const crypto = require("crypto")
+const Transaction = require('./transaction');
+const Record = require('./record');
+const crypto = require("crypto");
 const { CONFIG_FILE } = require('../common-constant');
 const { INITIAL_BALANCE } =require(CONFIG_FILE);
 const writer =  new FileWriter();
@@ -64,6 +65,20 @@ class Wallet {
         return transaction;
     }
 
+    createRecord(data,recordPool){
+
+        if(!data){
+            console.log(`Recived data is empty`)
+            return;
+        }
+        
+        record = Record.newRecord(this,data);
+        recordPool.addRecord(record);
+
+        return record;
+    }
+
+
     calculateBalance(blockchain){ 
 
         let balance = this.balance;
@@ -72,7 +87,9 @@ class Wallet {
         blockchain.chain.forEach( block =>{
             if(Array.isArray(block.data)){
                 block.data.forEach(transaction =>{
-                        transactions.push(transaction);  
+                        if(transaction.input){
+                            transactions.push(transaction);  
+                        }
                     }  
                 )
             }
