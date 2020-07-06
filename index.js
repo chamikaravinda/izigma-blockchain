@@ -12,7 +12,7 @@ class IzigmaBlockchain{
           this.wallet.createWallet();
           this.transactionPool =  new  TransactionPool();
           this.recordPool = new RecordPool();
-          this.miner= new Miner(this.chain,this.transactionPool,this.wallet);
+          this.miner= new Miner(this.chain,this.transactionPool,this.recordPool,this.wallet);
     }
 
     //Blockchain functions
