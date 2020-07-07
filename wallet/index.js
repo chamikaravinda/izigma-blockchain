@@ -72,7 +72,7 @@ class Wallet {
             return;
         }
         
-        record = Record.newRecord(this,data);
+        let record = Record.newRecord(this,data);
         recordPool.addRecord(record);
 
         return record;

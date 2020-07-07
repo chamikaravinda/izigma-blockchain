@@ -3,6 +3,7 @@ const { CONFIG_FILE } = require('../common-constant');
 const  {DIFFICULTY,MINE_RATE} = require(CONFIG_FILE);
 
 class Block{
+
     constructor(timestamp,lastHash,hash,data,nonce,difficulty){
         this.timestamp = timestamp;
         this.lastHash = lastHash;
@@ -54,7 +55,7 @@ class Block{
         return ChainUtil.hash(`${timestamp}${lastHash}${data}${nonce}${difficulty}`).toString();
     }
 
-    static blockHash(block){
+    static blockHash(block){ 
         const {timestamp,lastHash,data,nonce,difficulty} = block;
         return Block.hash(timestamp,lastHash,data,nonce,difficulty);
     }

@@ -12,7 +12,7 @@ class Record{
 
     static newRecord(creatorWallet,data){
         const record =  new this();
-        record.data.push(...data);
+        record.data.push(data);
         Record.signRecord(record,creatorWallet);
         return record;
     }

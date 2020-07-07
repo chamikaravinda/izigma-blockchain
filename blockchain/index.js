@@ -31,6 +31,7 @@ class Blockchain {
     }
 
     async isValidChain(chain){
+
         let currentChain = await this.getChain();
          
         if(JSON.stringify(chain[0]) !== JSON.stringify(currentChain[0])) return false;
@@ -49,6 +50,7 @@ class Blockchain {
     }
 
     async replaceChain(newChain){
+
         let currentChain = await this.getChain();
         
         if(newChain.length <= currentChain.length){
@@ -62,6 +64,7 @@ class Blockchain {
         console.log('Replacing blockchain with the new chain...');
 
         await writer.replaceChain(newChain);
+        
     }
 }
 

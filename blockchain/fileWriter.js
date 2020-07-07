@@ -54,6 +54,7 @@ class BlockchainFileWriter{
             return;
         }
       });
+      
       chain = JSON.parse(chain);
       chain.push(data);
       
