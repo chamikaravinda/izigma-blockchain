@@ -1,33 +1,30 @@
-const Record = require('../wallet/record');
+const Record = require("../wallet/record");
 
-class RecordPool{
+class RecordPool {
+  constructor() {
+    this.records = [];
+  }
 
-    constructor(){
-        this.records=[];
-    }
+  addRecord(record) {
+    this.records.push(record);
+  }
 
-    addRecord(record){
-        this.records.push(record);
-    }
+  validRecords(algorithm) {
+    return this.records.filter((record) => {
+      let isValidRecord = true;
 
+      if (!Record.verifyRecord(record, algorithm)) {
+        console.log(`Invalid signature from ${record.features.createdBy}.`);
+        isValidRecord = false;
+      }
 
-    validRecords(){
-        return this.records.filter(record=>{
-            let isValidRecord =  true;
+      if (isValidRecord) return record;
+    });
+  }
 
-            if(!Record.verifyRecord(record)){
-                console.log(`Invalid signature from ${record.features.createdBy}.`);
-                isValidRecord =false;
-            }
-    
-            if(isValidRecord)
-                return record;
-        });
-    }
-
-    clear(){
-        this.records = [];
-    }
+  clear() {
+    this.records = [];
+  }
 }
 
 module.exports = RecordPool;

@@ -1,114 +1,120 @@
-const fs = require('fs');
-const { BLOCKCHAIN_FILE } = require('../common-constant');
+const fs = require("fs");
+const { BLOCKCHAIN_FILE } = require("../common-constant");
+const ChainUtil = require("../chain-util");
 
+class BlockchainFileWriter {
+  async writeGenesisBlock(block) {
+    let chain = [];
 
+    const data = {
+      hash: block.hash,
+      lastHash: block.lastHash,
+      timestamp: block.timestamp,
+      nonce: block.nonce,
+      difficulty: block.difficulty,
+      data: block.data,
+    };
 
-class BlockchainFileWriter{
-
-    async writeGenesisBlock(block){
-
-      let isExsiste = await this.isBlockchainFileExsist();
-
-      if(!isExsiste){
-        
-        let chain=[];
-
-        const data = {
-            hash : block.hash,
-            lastHash : block.lastHash,
-            timestamp : block.timestamp,
-            nonce : block.nonce,
-            difficulty : block.difficulty,
-            data: block.data
+    chain.push(data);
+    const fileName = ChainUtil.blockchainFile();
+    await fs.writeFileSync(
+      fileName,
+      JSON.stringify(chain, null, 2),
+      "utf8",
+      (err) => {
+        if (err) {
+          console.log("Error in creating the genesis block...");
+        } else {
+          console.log("Genesis block added...");
         }
-  
-        chain.push(data);
-  
-        await fs.writeFileSync(BLOCKCHAIN_FILE, JSON.stringify(chain,null,2), 'utf8',(err) => {
-          if (err){
-            console.log('Error in creating the genesis block...');
-          }else{
-            console.log("Genesis block added...");
-          }
-        });
       }
-    }
- 
-    async writeToFile(block){
-        const data = {
-          hash : block.hash,
-          lastHash : block.lastHash,
-          timestamp : block.timestamp,
-          nonce : block.nonce,
-          difficulty : block.difficulty,
-          data: block.data
-      }
+    );
+    return fileName;
+  }
 
-      let chain = await fs.readFileSync(BLOCKCHAIN_FILE, 'utf8', function(err) {
-        if(err){
-            if (err.code === 'ENOENT') {
-                console.log('Create the chain first...');
-            }else{
-                console.log('Error in writing the block to the chain...');
-            }
-            return;
+  async writeToFile(block, fileName) {
+    const data = {
+      hash: block.hash,
+      lastHash: block.lastHash,
+      timestamp: block.timestamp,
+      nonce: block.nonce,
+      difficulty: block.difficulty,
+      data: block.data,
+    };
+
+    let chain = await fs.readFileSync(fileName, "utf8", function (err) {
+      if (err) {
+        if (err.code === "ENOENT") {
+          console.log("Create the chain first...");
+        } else {
+          console.log("Error in writing the block to the chain...");
         }
-      });
-      
-      chain = JSON.parse(chain);
-      chain.push(data);
-      
-      await fs.writeFileSync(BLOCKCHAIN_FILE, JSON.stringify(chain,null,2), 'utf8',(err) => {
-        if (err){
-          console.log('Error in writing the block to the chain...');
-        }else{
+        return;
+      }
+    });
+
+    chain = JSON.parse(chain);
+    chain.push(data);
+
+    await fs.writeFileSync(
+      fileName,
+      JSON.stringify(chain, null, 2),
+      "utf8",
+      (err) => {
+        if (err) {
+          console.log("Error in writing the block to the chain...");
+        } else {
           console.log("Block added...");
         }
-      });      
-    }
+      }
+    );
+    return chain;
+  }
 
-
-    async replaceChain(chain){
-      await fs.writeFileSync(BLOCKCHAIN_FILE, JSON.stringify(chain,null,2), 'utf8',(err) => {
-        if (err){
-          console.log('Error in replacing the chain...');
-        }else{
+  async replaceChain(chain, fileName) {
+    await fs.writeFileSync(
+      fileName,
+      JSON.stringify(chain, null, 2),
+      "utf8",
+      (err) => {
+        if (err) {
+          console.log("Error in replacing the chain...");
+        } else {
           console.log("Blockchin replaced...");
         }
-      });    
-    }
+      }
+    );
+  }
 
-    async readFromFile(){
-      let chain = await fs.readFileSync(BLOCKCHAIN_FILE, 'utf8', (err) => {
-        if(err){
-            if (err.code === 'ENOENT') {
-                console.log('Create the chain first...');
-            }else{
-                console.log('Error in writing the  block to the chain...');
-            }
-            return;
+  async readFromFile(fileName) {
+    let chain = await fs.readFileSync(fileName, "utf8", (err) => {
+      if (err) {
+        if (err.code === "ENOENT") {
+          console.log("Create the chain first...");
+        } else {
+          console.log("Error in writing the  block to the chain...");
+        }
+        return;
+      }
+    });
+    chain = JSON.parse(chain);
+    return chain;
+  }
+
+  async isBlockchainFileExsist(fileName) {
+    try {
+      let isExsiste = await fs.existsSync(fileName, (err) => {
+        if (err) {
+          console.log(err);
+          throw err;
         }
       });
-      chain = JSON.parse(chain);
-      return chain;
+      return isExsiste;
+    } catch (err) {
+      console.log("Error in reading the blockchain file");
+      return false;
     }
-
-    async isBlockchainFileExsist(){
-      try {
-        let  isExsiste =await fs.existsSync(BLOCKCHAIN_FILE,(err)=>{
-          if(err){
-            console.log(err);
-            throw err;
-          }
-        }); 
-        return isExsiste;
-      }catch(err) {
-        console.log("Error in reading the blockchain file");
-        return false;
-      }
-    }
- 
-    
+  }
 }
 
-module.exports = BlockchainFileWriter; 
+module.exports = BlockchainFileWriter;

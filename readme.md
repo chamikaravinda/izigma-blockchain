@@ -1,15 +1,17 @@
-Read Me 
+Read Me
+
 # izigma-blockchain
 
-This is a blockchain framework to use with node servers 
+This is a blockchain framework that support multiple chain handling, to use with node servers
 
-### configuration 
+### configuration
 
 To use or test this library you need to add a configuration
 file.
 
-STEP 1 : Run the following command relevant to your 
-operating system in the project directory
+STEP 1 : Run the following command relevant to your
+
+    operating system in the project directory
 
     windows :
     ```
@@ -20,7 +22,8 @@ operating system in the project directory
     ```
     touch izigma-config.js
     ```
-STEP 2 : Past the following code in the created file 
+
+STEP 2 : Past the following code in the created file
 
     ```
     const DIFFICULTY = 2;
@@ -28,15 +31,15 @@ STEP 2 : Past the following code in the created file
     const INITIAL_BALANCE = 500;
     const MINING_REWARD = 50;
     module.exports = { DIFFICULTY,MINE_RATE,INITIAL_BALANCE,MINING_REWARD};
-    
+
     ```
 
     Here the DIFFICULTY attribute is the initial difficulty for the proof of work consesus.
     MINE_RATE is the how often a block is created in the mine in mille seconds.
     INITIAL_BALANCE hold the wallate balance of the node.
-    And MINING_REWARD is the reward recives for the miner for doing mining works... 
+    And MINING_REWARD is the reward recives for the miner for doing mining works...
 
-### Example Code 
+### Example Code
 
 ```
 const express = require ('express');
@@ -46,6 +49,7 @@ const Blockchain = require('izigma-blockchain');
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 const app = express();
+//To work with more chains create more objects like chain_2,chain_3
 const chain = new Blockchain();
 
 app.use(bodyParser.json());
@@ -58,9 +62,9 @@ app.get('/blocks',async(req,res) =>{
 app.post('/mine',async(req,res) =>{
     const block = await chain.addBlock(req.body.data);
     console.log(`New block added : ${ block.toString()}`);
-    
+
     let blockchain = await chain.getChain();
-    
+
     res.redirect('/blocks');
 });
 
@@ -88,20 +92,7 @@ app.get('/public-key',(req,res)=>{
 })
 
 app.listen(HTTP_PORT, async () => {
-    let check = await chain.isBlockchainExsist();
-
-    if(!check){
-        await chain.addGenesisBlock()
-    }
-    
-    console.log(`Listeing on port ${HTTP_PORT}`);
-});    
-
+  console.log(`Listeing on port ${HTTP_PORT}`);
+});
 
 ```
- 
-
-
- 
-
-
