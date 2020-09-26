@@ -76,6 +76,11 @@ class Blockchain {
     this.chain = newChain;
     await writer.replaceChain(newChain, this.fileName);
   }
+
+  async calculateBlockchainHash() {
+    let currentChain = await this.getChain();
+    return ChainUtil.hash(currentChain);
+  }
 }
 
 module.exports = Blockchain;

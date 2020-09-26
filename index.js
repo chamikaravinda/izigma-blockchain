@@ -1,10 +1,11 @@
 const Blockchain = require("./blockchain");
 const Wallet = require("./wallet");
 const TransactionPool = require("./wallet/transaction-pool");
-const Miner = require("./miner/miner");
+const Miner = require("./Miner/miner");
 const RecordPool = require("./wallet/record-pool");
 
 class IzigmaBlockchain {
+  /* Create the instances of the components */
   constructor() {
     this.chain = new Blockchain();
     this.chain.addGenesisBlock();
@@ -12,6 +13,7 @@ class IzigmaBlockchain {
     this.wallet.createWallet();
     this.transactionPool = new TransactionPool();
     this.recordPool = new RecordPool();
+    //Miner
     this.miner = new Miner(this.transactionPool, this.recordPool, this.chain);
   }
 
@@ -43,6 +45,15 @@ class IzigmaBlockchain {
     this.chain.replaceChain(newChain);
   }
 
+  //geth the blockchain file name
+  async getChainFileName() {
+    return await this.chain.fileName;
+  }
+
+  //geth the blockchain file hash
+  async calculateBlockchainHash() {
+    return await this.chain.calculateBlockchainHash();
+  }
   /* ------- Wallet functions --------- */
 
   //create a new wallet or get the current wallet data to the chain
@@ -50,7 +61,7 @@ class IzigmaBlockchain {
   Else the blockchain wallets works fine with RSA algorithm keys.A new wallet will be
   created if the parameters passed deleting the curent wallet */
   async createWallet(publicKey, privateKey, algorithm) {
-    this.wallet.createWallet(publicKey, privateKey, algorithm);
+    await this.wallet.createWallet(publicKey, privateKey, algorithm);
   }
 
   //create a new transaction to the transaction pool
@@ -66,7 +77,7 @@ class IzigmaBlockchain {
 
   //create a new record to the record pool
   async createRecord(data) {
-    return this.wallet.createRecord(data, this.recordPool);
+    return await this.wallet.createRecord(data, this.recordPool);
   }
 
   //get the public key of this node

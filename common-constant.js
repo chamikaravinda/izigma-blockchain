@@ -1,6 +1,6 @@
 const BLOCKCHAIN_FILE = "blockchain_data.json";
 const WALLET_FILE = "wallet_data.json";
-const CONFIG_FILE = "../../../izigma-config";
+const CONFIG_FILE = "../izigma-config";
 const BLOCKCHAIN_TEST_FILE = "blockchain_test_data.json";
 const RSA_ALGORITHM = "rsa";
 const SECP256K1_ALGORITHM = "secp256k1";
