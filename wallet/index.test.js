@@ -143,33 +143,31 @@ describe("Wallet", () => {
 
 //Wallet check with the custome Keys
 describe("Wallet with Custome Keys", () => {
-  let wallet, tp, bc;
+  let wallet2, tp2, bc2;
   let privateKey =
     "d898a0f5264c7470e95195a270c3bdd0ad67de815c5f509a0caca9bf36ed0916";
   let publicKey =
     "033af71cd3a5e392e2c28ba1cda32606584b19735056e54d03d2dd8bd210d99395";
+
   beforeEach(async () => {
-    wallet = new Wallet();
-    await wallet.createWallet(publicKey, privateKey, SECP256K1_ALGORITHM);
-    tp = new TransactionPool();
-    bc = new Blockchain();
-    await bc.addGenesisBlock();
-    await bc.getChain();
+    wallet2 = new Wallet();
+    await wallet2.createWallet(publicKey, privateKey, SECP256K1_ALGORITHM);
+    tp2 = new TransactionPool();
+    bc2 = new Blockchain();
+    await bc2.addGenesisBlock();
+    await bc2.getChain();
   });
 
   afterAll(async () => {
     let data = await writer.writeToWallet();
-    this.publicKey = data.publicKey;
-    this.privateKey = data.privateKey;
-    this.algorithm = data.algorithm;
   });
 
   it("check the public key not null", async () => {
-    expect(wallet.publicKey).not.toEqual(null);
+    expect(wallet2.publicKey).not.toEqual(null);
   });
 
   it("check the private key not null", async () => {
-    expect(wallet.privateKey).not.toEqual(null);
+    expect(wallet2.privateKey).not.toEqual(null);
   });
 
   describe("creating a transaction", () => {
@@ -178,20 +176,20 @@ describe("Wallet with Custome Keys", () => {
     beforeEach(() => {
       sendAmount = 50;
       recipient = "r4nd0m-4ddr355";
-      transaction = wallet.createTransaction(recipient, sendAmount, bc, tp);
+      transaction = wallet2.createTransaction(recipient, sendAmount, bc2, tp2);
     });
 
     describe("and doing the same transaction", () => {
       beforeEach(() => {
-        wallet.createTransaction(recipient, sendAmount, bc, tp);
+        wallet2.createTransaction(recipient, sendAmount, bc2, tp2);
       });
 
       it("doubles the `sendAmount` subtracted from the wallet balance", () => {
         expect(
           transaction.outputs.find(
-            (output) => output.address === wallet.publicKey
+            (output) => output.address === wallet2.publicKey
           ).amount
-        ).toEqual(wallet.balance - sendAmount * 2);
+        ).toEqual(wallet2.balance - sendAmount * 2);
       });
 
       it("clones the  `sendAmount` output for the recipient", () => {
@@ -217,20 +215,20 @@ describe("Wallet with Custome Keys", () => {
       addBalance = 100;
       repeatAdd = 3;
       for (let i = 0; i < repeatAdd; i++) {
-        senderWallet.createTransaction(wallet.publicKey, addBalance, bc, tp);
+        senderWallet.createTransaction(wallet2.publicKey, addBalance, bc2, tp2);
       }
-      await bc.addBlock(tp.transactions);
-      await bc.getChain();
+      await bc2.addBlock(tp2.transactions);
+      await bc2.getChain();
     });
 
     it("calculate the balance for blockchain transaction matching the recipient", () => {
-      expect(wallet.calculateBalance(bc)).toEqual(
+      expect(wallet2.calculateBalance(bc2)).toEqual(
         parseFloat(INITIAL_BALANCE) + parseFloat(addBalance * repeatAdd)
       );
     });
 
     it("calculate the balance for blockchain transactions matching the sender", () => {
-      expect(senderWallet.calculateBalance(bc)).toEqual(
+      expect(senderWallet.calculateBalance(bc2)).toEqual(
         parseFloat(INITIAL_BALANCE) - parseFloat(addBalance * repeatAdd)
       );
     });
@@ -239,29 +237,34 @@ describe("Wallet with Custome Keys", () => {
       let subtractBalance, recipientBalance;
 
       beforeEach(async () => {
-        tp.clear();
+        tp2.clear();
         subtractBalance = 60;
-        recipientBalance = wallet.calculateBalance(bc);
-        wallet.createTransaction(
+        recipientBalance = wallet2.calculateBalance(bc2);
+        wallet2.createTransaction(
           senderWallet.publicKey,
           subtractBalance,
-          bc,
-          tp
+          bc2,
+          tp2
         );
-        await bc.addBlock(tp.transactions);
-        await bc.getChain();
+        await bc2.addBlock(tp2.transactions);
+        await bc2.getChain();
       });
 
       describe("and the sender sends another transaction to the recipien", () => {
         beforeEach(async () => {
-          tp.clear();
-          senderWallet.createTransaction(wallet.publicKey, addBalance, bc, tp);
-          await bc.addBlock(tp.transactions);
-          await bc.getChain();
+          tp2.clear();
+          senderWallet.createTransaction(
+            wallet2.publicKey,
+            addBalance,
+            bc2,
+            tp2
+          );
+          await bc2.addBlock(tp2.transactions);
+          await bc2.getChain();
         });
 
         it("calculate the recipient balanace only using transactions since its most recent one", () => {
-          expect(wallet.calculateBalance(bc)).toEqual(
+          expect(wallet2.calculateBalance(bc2)).toEqual(
             recipientBalance - subtractBalance + addBalance
           );
         });

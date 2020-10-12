@@ -3,15 +3,15 @@ const Transaction = require("../wallet/transaction");
 const Blockchain = require("../blockchain");
 
 class Miner {
-  constructor(transactioPool, recordPool, blockchain) {
+  constructor(transactioPool, recordPool, blockchain, wallet) {
     this.blockchain = blockchain;
     this.transactioPool = transactioPool;
     this.recordPool = recordPool;
-    this.wallet = new Wallet();
+    this.wallet = wallet;
   }
 
-  mineTransactions() {
-    this.wallet.createWallet();
+  async mineTransactions() {
+    await this.wallet.createWallet();
     const validTransactions = this.transactioPool.validTransactions(
       this.wallet.algorithm
     );
@@ -23,7 +23,8 @@ class Miner {
     return block;
   }
 
-  mineRecord() {
+  async mineRecord() {
+    await this.wallet.createWallet();
     const validRecords = this.recordPool.validRecords(this.wallet.algorithm);
     const block = this.blockchain.addBlock(validRecords);
     this.recordPool.clear();

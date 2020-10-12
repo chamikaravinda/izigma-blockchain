@@ -40,7 +40,6 @@ class WalletFileWriter {
         privateKey: privateKey,
         algorithm: algorithm,
       };
-
       await fs.writeFileSync(
         WALLET_FILE,
         JSON.stringify(data, null, 2),

@@ -10,11 +10,15 @@ class IzigmaBlockchain {
     this.chain = new Blockchain();
     this.chain.addGenesisBlock();
     this.wallet = new Wallet();
-    this.wallet.createWallet();
     this.transactionPool = new TransactionPool();
     this.recordPool = new RecordPool();
     //Miner
-    this.miner = new Miner(this.transactionPool, this.recordPool, this.chain);
+    this.miner = new Miner(
+      this.transactionPool,
+      this.recordPool,
+      this.chain,
+      this.wallet
+    );
   }
 
   /* --------Blockchain functions ------------- */
@@ -104,6 +108,12 @@ class IzigmaBlockchain {
     return this.transactionPool.clear();
   }
 
+  //add Transaction or update a transaction in the pool
+  //Can be used in syncing the transaction pool of the node with another node
+  updateOrAddTransactionToTransactionPool(transaction) {
+    return this.transactionPool.updateOrAddTransaction(transaction);
+  }
+
   /* --------- Record Pool Functions ---------- */
 
   //get the current record pool
@@ -115,17 +125,21 @@ class IzigmaBlockchain {
   clearRecordPool() {
     return this.recordPool.clear();
   }
-
+  //add record to the the record pool
+  //Can be used in syncing the record pool of the node with another node
+  addRecordToRecordPool() {
+    return this.recordPool();
+  }
   /* --------- Mine Functions ---------- */
 
   //mine the transaction
   async mineTransactions() {
-    return this.miner.mineTransactions();
+    return await this.miner.mineTransactions();
   }
 
   //mine the records
   async mineRecords() {
-    return this.miner.mineRecord();
+    return await this.miner.mineRecord();
   }
 }
 

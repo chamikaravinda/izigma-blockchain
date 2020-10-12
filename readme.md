@@ -31,7 +31,6 @@ STEP 2 : Past the following code in the created file
     const INITIAL_BALANCE = 500;
     const MINING_REWARD = 50;
     module.exports = { DIFFICULTY,MINE_RATE,INITIAL_BALANCE,MINING_REWARD};
-
     ```
 
     Here the DIFFICULTY attribute is the initial difficulty for the proof of work consesus.
@@ -51,7 +50,7 @@ const HTTP_PORT = process.env.HTTP_PORT || 3001;
 const app = express();
 //To work with more chains create more objects like chain_2,chain_3
 const chain = new Blockchain();
-
+chain.createWallet();
 app.use(bodyParser.json());
 
 app.get('/blocks',async(req,res) =>{

@@ -3,8 +3,7 @@ const { CONFIG_FILE, SECP256K1_ALGORITHM } = require("../common-constant");
 const { MINING_REWARD } = require(CONFIG_FILE);
 const crypto = require("crypto");
 const EC = require("elliptic").ec;
-const ec = new EC("secp256k1"); // 256-bit curve: `secp256k1`
-const cryptoJS = require("crypto-js");
+const ec = new EC("secp256k1");
 
 class Transaction {
   constructor() {
@@ -72,11 +71,9 @@ class Transaction {
 
   static verifyTransaction(transaction, algorithm) {
     if (algorithm === SECP256K1_ALGORITHM) {
-      return ec.verify(
-        ChainUtil.hash(transaction.outputs),
-        transaction.input.signature,
-        transaction.input.address
-      );
+      let dataHash = ChainUtil.hash(transaction.outputs);
+      let key = ec.keyFromPublic(transaction.input.address, "hex");
+      return key.verify(dataHash, transaction.input.signature);
     } else {
       return crypto.verify(
         "sha256",

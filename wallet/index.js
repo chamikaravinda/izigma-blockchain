@@ -155,15 +155,10 @@ class Wallet {
   static blockchainWallet() {
     if (this.algorithm === SECP256K1_ALGORITHM) {
       const blockchainWallet = new this();
-      let privateKey;
-      do {
-        privateKey = randomBytes(32);
-      } while (!secp256k1.privateKeyVerify(privateKey));
+      let key = ec.genKeyPair();
 
-      const publicKey = secp256k1.publicKeyCreate(privKey);
-
-      blockchainWallet.publicKey = publicKey;
-      blockchainWallet.privateKey = privateKey;
+      blockchainWallet.publicKey = key.getPublic();
+      blockchainWallet.privateKey = key.getPrivate();
       blockchainWallet.address = "blockchain-wallet";
       blockchainWallet.algorithm = SECP256K1_ALGORITHM;
       return blockchainWallet;

@@ -1,11 +1,12 @@
 {
   "name": "izigma-blockchain",
-  "version": "1.6.6",
+  "version": "1.7.0",
   "description": "This is a blockchain freamwork to build blockchain networks",
   "main": "\t",
   "scripts": {
     "test": "jest --coverage",
-    "dev-test": "nodemon dev-test.js"
+    "dev-test": "nodemon dev-test.js",
+    "performance-test": "jest performance.test.js"
   },
   "jest": {
     "testEnvironment": "node"
@@ -32,7 +33,7 @@
     "crypto-js": "^4.0.0",
     "csv-parser": "^2.3.3",
     "csv-write-stream": "^2.0.0",
-    "elliptic": "^6.5.3",
-    "uuid": "^8.3.0"
+    "elliptic": "^6.5.0",
+    "uuid": "^8.1.0"
   }
 }
