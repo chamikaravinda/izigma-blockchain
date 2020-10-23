@@ -3,12 +3,16 @@ const Blockchain = require("./index");
 describe("Blockchain", () => {
   let bc, bc2;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     bc = new Blockchain();
     await bc.addGenesisBlock();
     bc2 = new Blockchain();
     await bc2.addGenesisBlock();
     await bc2.replaceChain(bc.chain); //To make the 2 chains look like same from different nodes
+  });
+
+  it("test initial chains are equal ", async () => {
+    expect(bc.chain).toEqual(bc2.chain);
   });
 
   it("is the chain exists", async () => {
@@ -45,6 +49,8 @@ describe("Blockchain", () => {
   it("replace the chain with a valid chain ", async () => {
     await bc2.addBlock("goo");
     await bc.replaceChain(bc2.chain);
+    await bc2.getChain();
+    await bc.getChain();
     expect(bc.chain).toEqual(bc2.chain);
   });
 

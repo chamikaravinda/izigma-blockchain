@@ -1,19 +1,34 @@
-const TransactionPool = require("./transaction-pool");
-const Transaction = require("./transaction");
+const SpecialCoinTransactionPool = require("./special-coin-transaction-pool");
+const SpecialCoinTransaction = require("./special-coin-transaction");
 const Wallet = require("./index");
 const Blockchain = require("../blockchain");
+const CoinGenerator = require("../coin_generator");
 
-describe("TransactionPool", () => {
-  let tp, wallet, transaction, bc;
+describe("Special Coin TransactionPool", () => {
+  let tp, wallet, transaction, bc, coin, generator;
 
   beforeAll(async () => {
-    tp = new TransactionPool();
+    tp = new SpecialCoinTransactionPool();
     wallet = new Wallet();
     await wallet.createWallet();
     bc = new Blockchain();
     await bc.addGenesisBlock();
     await bc.getChain();
-    transaction = wallet.createTransaction("r4nd-4dr335", 30, bc, tp);
+
+    generator = new CoinGenerator(wallet, bc);
+    coin = await generator.createAndDeployCoin(
+      [wallet.publicKey],
+      500,
+      "default"
+    );
+    coin.amount = 30;
+    await bc.getChain();
+    transaction = wallet.createSpecialCoinTransaction(
+      "r4nd-4dr335",
+      coin,
+      bc,
+      tp
+    );
   });
 
   it("adds transaction to the pool", () => {
@@ -23,8 +38,9 @@ describe("TransactionPool", () => {
   });
 
   it("updates a transaction in the pool", () => {
+    coin.amount = 40;
     const oldTransaction = JSON.stringify(transaction);
-    const newTransaction = transaction.update(wallet, "foo-4ddr355", 40);
+    const newTransaction = transaction.update(wallet, "foo-4ddr355", coin);
     tp.updateOrAddTransaction(newTransaction);
 
     expect(
@@ -46,9 +62,15 @@ describe("TransactionPool", () => {
       for (let i = 0; i < 6; i++) {
         wallet = new Wallet();
         await wallet.createWallet();
-        transaction = wallet.createTransaction("r4nd-4dr355", 30, bc, tp);
+        coin.amount = 30;
+        transaction = wallet.createSpecialCoinTransaction(
+          "r4nd-4dr355",
+          coin,
+          bc,
+          tp
+        );
         if (i % 2 == 0) {
-          transaction.input.amount = 99999;
+          transaction.sInput.coin.amount = 99999;
           tp.transactions[i] = transaction;
         } else {
           validTransactions.push(transaction);
@@ -63,7 +85,9 @@ describe("TransactionPool", () => {
     });
 
     it("grabs valid transaction", () => {
-      expect(tp.validTransactions("rsa")).toEqual(validTransactions);
+      expect(JSON.stringify(tp.validTransactions("rsa"))).toEqual(
+        JSON.stringify(validTransactions)
+      );
     });
   });
 });

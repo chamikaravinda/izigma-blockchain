@@ -1,6 +1,6 @@
-const Transaction = require("../wallet/transaction");
+const SpecialCoinTransaction = require("../wallet/special-coin-transaction");
 
-class TransactionPool {
+class SpecialCoinTransactionPool {
   constructor() {
     this.transactions = [];
   }
@@ -22,7 +22,7 @@ class TransactionPool {
 
   // check for existing transaction
   existingTransaction(address) {
-    return this.transactions.find((t) => t.input.address === address);
+    return this.transactions.find((t) => t.sInput.address === address);
   }
 
   // get the valid transaction
@@ -30,17 +30,17 @@ class TransactionPool {
     return this.transactions.filter((transaction) => {
       let isValidTransaction = true;
 
-      const outputTotal = transaction.outputs.reduce((total, output) => {
-        return total + output.amount;
+      const outputTotal = transaction.sOutputs.reduce((total, output) => {
+        return total + output.coin.amount;
       }, 0);
 
-      if (transaction.input.amount !== outputTotal) {
-        console.log(`Invalid transaction from ${transaction.input.address}.`);
+      if (transaction.sInput.coin.amount !== outputTotal) {
+        console.log(`Invalid transaction from ${transaction.sInput.address}.`);
         isValidTransaction = false;
       }
 
-      if (!Transaction.verifyTransaction(transaction, algorithm)) {
-        console.log(`Invalid signature from ${transaction.input.address}.`);
+      if (!SpecialCoinTransaction.verifyTransaction(transaction, algorithm)) {
+        console.log(`Invalid signature from ${transaction.sInput.address}.`);
         isValidTransaction = false;
       }
 
@@ -54,4 +54,4 @@ class TransactionPool {
   }
 }
 
-module.exports = TransactionPool;
+module.exports = SpecialCoinTransactionPool;

@@ -1,8 +1,10 @@
 const Blockchain = require("./blockchain");
 const Wallet = require("./wallet");
 const TransactionPool = require("./wallet/transaction-pool");
-const Miner = require("./Miner/miner");
+const SpecialCoinTransactionPool = require("./wallet/special-coin-transaction-pool");
+const Miner = require("./miner/miner");
 const RecordPool = require("./wallet/record-pool");
+const CoinGenerator = require("./coin_generator/index");
 
 class IzigmaBlockchain {
   /* Create the instances of the components */
@@ -11,10 +13,13 @@ class IzigmaBlockchain {
     this.chain.addGenesisBlock();
     this.wallet = new Wallet();
     this.transactionPool = new TransactionPool();
+    this.specialCoinTransactionPool = new SpecialCoinTransactionPool();
     this.recordPool = new RecordPool();
+    this.coinGenerator = new CoinGenerator(this.wallet, this.chain);
     //Miner
     this.miner = new Miner(
       this.transactionPool,
+      this.specialCoinTransactionPool,
       this.recordPool,
       this.chain,
       this.wallet
@@ -79,6 +84,17 @@ class IzigmaBlockchain {
     );
   }
 
+  //create a new special coin transaction to the transaction pool
+  async createSpecialCoinTransaction(recipient, coin) {
+    await this.chain.getChain();
+    return this.wallet.createSpecialCoinTransaction(
+      recipient,
+      coin,
+      this.chain,
+      this.specialCoinTransactioPool
+    );
+  }
+
   //create a new record to the record pool
   async createRecord(data) {
     return await this.wallet.createRecord(data, this.recordPool);
@@ -114,6 +130,24 @@ class IzigmaBlockchain {
     return this.transactionPool.updateOrAddTransaction(transaction);
   }
 
+  /* --------- Special Coin Transaction Pool Functions ---------- */
+
+  //get the current transaction pool
+  getSpecialCoinTransactionPool() {
+    return this.specialCoinTransactionPool.transactions;
+  }
+
+  //clear the current transaction pool
+  clearSpecialCoinTransactionPool() {
+    return this.specialCoinTransactionPool.clear();
+  }
+
+  //add Transaction or update a transaction in the pool
+  //Can be used in syncing the transaction pool of the node with another node
+  updateOrAddTransactionToSpecialCoinTransactionPool(transaction) {
+    return this.specialCoinTransactionPool.updateOrAddTransaction(transaction);
+  }
+
   /* --------- Record Pool Functions ---------- */
 
   //get the current record pool
@@ -137,9 +171,24 @@ class IzigmaBlockchain {
     return await this.miner.mineTransactions();
   }
 
+  //mine the transaction
+  async mineSpecialCoinTransactions() {
+    return await this.miner.mineSpecialCoinTransactions();
+  }
+
   //mine the records
   async mineRecords() {
     return await this.miner.mineRecord();
+  }
+
+  /* --------- Coin generator Functions ---------- */
+  // create and deploy a special coin
+  async generateSpecailCoinandDeploy(recivers, coinsForEachReciver, coinName) {
+    return await this.coinGenerator.createAndDeployCoin(
+      recivers,
+      coinsForEachReciver,
+      coinName
+    );
   }
 }
 

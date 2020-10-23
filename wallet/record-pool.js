@@ -5,10 +5,12 @@ class RecordPool {
     this.records = [];
   }
 
+  // add a record to the record pool
   addRecord(record) {
     this.records.push(record);
   }
 
+  // get the valid records in the record pool
   validRecords(algorithm) {
     return this.records.filter((record) => {
       let isValidRecord = true;
@@ -22,6 +24,7 @@ class RecordPool {
     });
   }
 
+  // clear the record pool
   clear() {
     this.records = [];
   }

@@ -3,7 +3,7 @@ const Wallet = require("./index");
 describe("Record", () => {
   let record;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     wallet = new Wallet();
     await wallet.createWallet();
     record = Record.newRecord(wallet, "foo-record");

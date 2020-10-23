@@ -1,7 +1,7 @@
 const IzigmaBlockchain = require("./index");
 const { SECP256K1_ALGORITHM } = require("./common-constant");
 
-describe.skip("Wallet  - Operations on New Chain ", () => {
+describe("Wallet  - Operations on New Chain ", () => {
   let chain;
 
   beforeAll(async () => {
@@ -42,7 +42,7 @@ describe.skip("Wallet  - Operations on New Chain ", () => {
     expect(new_block).not.toBe(undefined);
   });
 
-  describe.skip(" After adding 200 Blocks", () => {
+  describe(" After adding 200 Blocks", () => {
     beforeAll(async () => {
       for (i = 0; i < 200; i++) {
         await chain.createTransaction(
@@ -88,7 +88,7 @@ describe.skip("Wallet  - Operations on New Chain ", () => {
   });
 });
 
-describe.skip("Wallet with SECP256K1 algorithm - Operations on New Chain ", () => {
+describe("Wallet with SECP256K1 algorithm - Operations on New Chain ", () => {
   let chain2;
   beforeAll(async () => {
     chain2 = new IzigmaBlockchain();
@@ -134,7 +134,7 @@ describe.skip("Wallet with SECP256K1 algorithm - Operations on New Chain ", () =
     expect(new_block).not.toBe(undefined);
   });
 
-  describe.skip(" After 200 Blocks", () => {
+  describe(" After 200 Blocks", () => {
     beforeAll(async () => {
       for (i = 0; i < 200; i++) {
         await chain2.createTransaction(

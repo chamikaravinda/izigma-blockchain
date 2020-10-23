@@ -12,6 +12,7 @@ class Record {
     this.data = [];
   }
 
+  // create a new record
   static newRecord(creatorWallet, data) {
     const record = new this();
     record.data.push(data);
@@ -19,6 +20,7 @@ class Record {
     return record;
   }
 
+  // sign the record
   static signRecord(record, creatorWallet) {
     record.features = {
       timestamp: Date.now(),
@@ -27,13 +29,11 @@ class Record {
     };
   }
 
+  // verify the record
   static verifyRecord(record, algorithm) {
     if (algorithm === SECP256K1_ALGORITHM) {
-      return ec.verify(
-        ChainUtil.hash(record.data),
-        record.features.signature,
-        record.features.createdBy
-      );
+      let key = ec.keyFromPublic(record.features.createdBy, "hex");
+      return key.verify(ChainUtil.hash(record.data), record.features.signature);
     } else {
       return crypto.verify(
         "sha256",

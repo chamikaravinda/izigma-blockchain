@@ -6,7 +6,7 @@ const Blockchain = require("../blockchain");
 describe("RecordPool", () => {
   let rp, wallet, record, bc;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     rp = new RecordPool();
     wallet = new Wallet();
     await wallet.createWallet();

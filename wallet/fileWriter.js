@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const { WALLET_FILE, RSA_ALGORITHM } = require("../common-constant");
 
 class WalletFileWriter {
+  //check is the wallet exist
   async isExsiste() {
     let isExsiste = await fs.existsSync(WALLET_FILE, (err) => {
       if (err) {
@@ -13,6 +14,7 @@ class WalletFileWriter {
     return isExsiste;
   }
 
+  // read the wallet file
   async readFromWallet() {
     try {
       let data = fs.readFileSync(WALLET_FILE, "utf8");
@@ -29,6 +31,7 @@ class WalletFileWriter {
     }
   }
 
+  //create a new wallet
   async writeToWallet(publicKey, privateKey, algorithm) {
     if (
       typeof publicKey !== "undefined" &&

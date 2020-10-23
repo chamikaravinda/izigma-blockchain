@@ -3,6 +3,7 @@ const { BLOCKCHAIN_FILE } = require("../common-constant");
 const ChainUtil = require("../chain-util");
 
 class BlockchainFileWriter {
+  // create the blockchain file
   async writeGenesisBlock(block) {
     let chain = [];
 
@@ -32,6 +33,7 @@ class BlockchainFileWriter {
     return fileName;
   }
 
+  // write a block to the chain
   async writeToFile(block, fileName) {
     const data = {
       hash: block.hash,
@@ -71,6 +73,7 @@ class BlockchainFileWriter {
     return chain;
   }
 
+  // replace the current chain with a new chain
   async replaceChain(chain, fileName) {
     await fs.writeFileSync(
       fileName,
@@ -86,6 +89,7 @@ class BlockchainFileWriter {
     );
   }
 
+  // read the blockchain
   async readFromFile(fileName) {
     let chain = await fs.readFileSync(fileName, "utf8", (err) => {
       if (err) {
@@ -101,6 +105,7 @@ class BlockchainFileWriter {
     return chain;
   }
 
+  // check the blockchain file exist
   async isBlockchainFileExsist(fileName) {
     try {
       let isExsiste = await fs.existsSync(fileName, (err) => {

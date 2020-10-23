@@ -1,5 +1,7 @@
 const FileWriter = require("./fileWriter");
 const Transaction = require("./transaction");
+const SpecialCoinTransaction = require("./special-coin-transaction");
+const SpecialCoin = require("../coin_generator/special-coin");
 const Record = require("./record");
 const crypto = require("crypto");
 const {
@@ -18,6 +20,7 @@ class Wallet {
     this.publicKey = null;
     this.privateKey = null;
     this.algorithm = null;
+    this.specialCoins = [];
   }
 
   toString() {
@@ -26,6 +29,7 @@ class Wallet {
         balance  : ${this.balance}`;
   }
 
+  //create or read the wallet
   async createWallet(publicKey, privateKey, algorithm) {
     if (
       typeof publicKey !== "undefined" &&
@@ -52,6 +56,7 @@ class Wallet {
     }
   }
 
+  //sign any record or transaction using keys
   sign(data) {
     if (this.algorithm === SECP256K1_ALGORITHM) {
       let signature = ec.sign(data, this.privateKey, "hex", {
@@ -69,6 +74,7 @@ class Wallet {
     }
   }
 
+  //create a regular transaction
   createTransaction(recipient, amount, blockchain, transactionPool) {
     this.balance = this.calculateBalance(blockchain);
 
@@ -91,6 +97,43 @@ class Wallet {
     return transaction;
   }
 
+  //create a special coin transaction
+  createSpecialCoinTransaction(
+    recipient,
+    coin,
+    blockchain,
+    specialCoinTransactionPool
+  ) {
+    const specialCoinBalance = this.calculateSpecialCoinBalance(
+      blockchain,
+      coin
+    );
+    if (parseFloat(coin.amount) > parseFloat(specialCoinBalance)) {
+      console.log(
+        `Amount : ${coin.amount} exceceds current balanace of ${coin.coinId} coins`
+      );
+      return;
+    }
+
+    let transaction = specialCoinTransactionPool.existingTransaction(
+      this.publicKey
+    );
+
+    if (transaction) {
+      transaction.update(this, recipient, coin);
+    } else {
+      transaction = SpecialCoinTransaction.newSpecialCoinTransaction(
+        this,
+        recipient,
+        coin
+      );
+      specialCoinTransactionPool.updateOrAddTransaction(transaction);
+    }
+
+    return transaction;
+  }
+
+  //create a data record
   createRecord(data, recordPool) {
     if (!data) {
       console.log(`Recived data is empty`);
@@ -103,6 +146,7 @@ class Wallet {
     return record;
   }
 
+  //calculate the wallet balance of the regular coin
   calculateBalance(blockchain) {
     let balance = this.balance;
     let transactions = [];
@@ -149,9 +193,81 @@ class Wallet {
       }
     });
 
+    this.balance = balance;
     return balance;
   }
 
+  //calculate the wallet balance of the special coin
+  calculateSpecialCoinBalance(blockchain, coin) {
+    let balance = 0;
+    let transactions = [];
+
+    blockchain.chain.forEach((block) => {
+      if (Array.isArray(block.data)) {
+        block.data.forEach((transaction) => {
+          if (transaction.sInput) {
+            if (
+              JSON.stringify(transaction.sInput.coin.coinId) ==
+              JSON.stringify(coin.coinId)
+            ) {
+              transactions.push(transaction);
+            }
+          }
+        });
+      }
+    });
+
+    const walletInputTs = transactions.filter(
+      (transaction) =>
+        JSON.stringify(transaction.sInput.address) ===
+        JSON.stringify(this.publicKey)
+    );
+
+    let startTime = 0;
+
+    if (walletInputTs.length > 0) {
+      const recentInputT = walletInputTs.reduce((prev, current) =>
+        prev.sInput.timestamp > current.sInput.timestamp ? prev : current
+      );
+
+      balance = recentInputT.sOutputs.find(
+        (output) =>
+          JSON.stringify(output.address) === JSON.stringify(this.publicKey)
+      ).coin.amount;
+      startTime = recentInputT.sInput.timestamp;
+    }
+
+    transactions.forEach((transaction) => {
+      if (transaction.sInput.timestamp > startTime) {
+        transaction.sOutputs.find((output) => {
+          if (
+            JSON.stringify(output.address) === JSON.stringify(this.publicKey)
+          ) {
+            balance += output.coin.amount;
+          }
+        });
+      }
+    });
+
+    let isIncludeInBalance = false;
+
+    this.specialCoins.forEach((c) => {
+      if (c.coinId === coin.coinId) {
+        c.amount = balance;
+        isIncludeInBalance = true;
+      }
+    });
+
+    if (!isIncludeInBalance) {
+      let specialCoin = new SpecialCoin();
+      specialCoin.coinId = coin.coinId;
+      specialCoin.amount = balance;
+      this.specialCoins.push(specialCoin);
+    }
+    return balance;
+  }
+
+  //create the blockchain wallet for the reward transactions
   static blockchainWallet() {
     if (this.algorithm === SECP256K1_ALGORITHM) {
       const blockchainWallet = new this();

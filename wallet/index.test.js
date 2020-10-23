@@ -16,7 +16,7 @@ const writer = new FileWriter();
 describe("Wallet", () => {
   let wallet, tp, bc;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     wallet = new Wallet();
     await wallet.createWallet();
     tp = new TransactionPool();
@@ -35,14 +35,14 @@ describe("Wallet", () => {
   describe("creating a transaction", () => {
     let transaction, sendAmount, recipient;
 
-    beforeEach(() => {
+    beforeAll(() => {
       sendAmount = 50;
       recipient = "r4nd0m-4ddr355";
       transaction = wallet.createTransaction(recipient, sendAmount, bc, tp);
     });
 
     describe("and doing the same transaction", () => {
-      beforeEach(() => {
+      beforeAll(() => {
         wallet.createTransaction(recipient, sendAmount, bc, tp);
       });
 
@@ -67,7 +67,8 @@ describe("Wallet", () => {
   describe("calculating a balance", () => {
     let addBalance, repeatAdd, senderWallet;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
+      tp.clear();
       senderWallet = new Wallet();
       const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
         modulusLength: 2048,
@@ -90,6 +91,7 @@ describe("Wallet", () => {
       senderWallet.algorithm = RSA_ALGORITHM;
       addBalance = 100;
       repeatAdd = 3;
+      await bc.getChain();
       for (let i = 0; i < repeatAdd; i++) {
         senderWallet.createTransaction(wallet.publicKey, addBalance, bc, tp);
       }
@@ -111,9 +113,10 @@ describe("Wallet", () => {
     describe("and the recipient conducts a transaction", () => {
       let subtractBalance, recipientBalance;
 
-      beforeEach(async () => {
+      beforeAll(async () => {
         tp.clear();
         subtractBalance = 60;
+        await bc.getChain();
         recipientBalance = wallet.calculateBalance(bc);
         wallet.createTransaction(
           senderWallet.publicKey,
@@ -129,6 +132,7 @@ describe("Wallet", () => {
           tp.clear();
           senderWallet.createTransaction(wallet.publicKey, addBalance, bc, tp);
           await bc.addBlock(tp.transactions);
+          await bc.getChain();
         });
 
         it("calculate the recipient balanace only using transactions since its most recent one", () => {
@@ -149,7 +153,7 @@ describe("Wallet with Custome Keys", () => {
   let publicKey =
     "033af71cd3a5e392e2c28ba1cda32606584b19735056e54d03d2dd8bd210d99395";
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     wallet2 = new Wallet();
     await wallet2.createWallet(publicKey, privateKey, SECP256K1_ALGORITHM);
     tp2 = new TransactionPool();
@@ -173,14 +177,14 @@ describe("Wallet with Custome Keys", () => {
   describe("creating a transaction", () => {
     let transaction, sendAmount, recipient;
 
-    beforeEach(() => {
+    beforeAll(() => {
       sendAmount = 50;
       recipient = "r4nd0m-4ddr355";
       transaction = wallet2.createTransaction(recipient, sendAmount, bc2, tp2);
     });
 
     describe("and doing the same transaction", () => {
-      beforeEach(() => {
+      beforeAll(() => {
         wallet2.createTransaction(recipient, sendAmount, bc2, tp2);
       });
 
@@ -205,7 +209,8 @@ describe("Wallet with Custome Keys", () => {
   describe("calculating a balance", () => {
     let addBalance, repeatAdd, senderWallet;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
+      tp2.clear();
       senderWallet = new Wallet();
       let keyPair = ec.genKeyPair();
 
@@ -236,7 +241,7 @@ describe("Wallet with Custome Keys", () => {
     describe("and the recipient conducts a transaction", () => {
       let subtractBalance, recipientBalance;
 
-      beforeEach(async () => {
+      beforeAll(async () => {
         tp2.clear();
         subtractBalance = 60;
         recipientBalance = wallet2.calculateBalance(bc2);
@@ -251,7 +256,7 @@ describe("Wallet with Custome Keys", () => {
       });
 
       describe("and the sender sends another transaction to the recipien", () => {
-        beforeEach(async () => {
+        beforeAll(async () => {
           tp2.clear();
           senderWallet.createTransaction(
             wallet2.publicKey,

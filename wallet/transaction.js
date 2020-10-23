@@ -12,6 +12,7 @@ class Transaction {
     this.outputs = [];
   }
 
+  // add the outputs to the transaction
   static transactionWithOutputs(senderWallet, outputs) {
     const transaction = new this();
     transaction.outputs.push(...outputs);
@@ -19,6 +20,7 @@ class Transaction {
     return transaction;
   }
 
+  // create a new transaction
   static newTransaction(senderWallet, recipient, amount) {
     if (amount > senderWallet.balance) {
       console.log(`Amount: ${amount} exceeds the current account balance...`);
@@ -34,6 +36,7 @@ class Transaction {
     ]);
   }
 
+  // create a reward tranasaction for the mining
   static rewardTransaction(minerWallet, blockchainWallet) {
     return Transaction.transactionWithOutputs(blockchainWallet, [
       {
@@ -43,6 +46,7 @@ class Transaction {
     ]);
   }
 
+  // update a existing transaction
   update(senderWallet, recipient, amount) {
     const senderOutput = this.outputs.find(
       (output) => output.address === senderWallet.publicKey
@@ -60,6 +64,7 @@ class Transaction {
     return this;
   }
 
+  // sing a transaction
   static signTransaction(transaction, senderWallet) {
     transaction.input = {
       timestamp: Date.now(),
@@ -69,6 +74,7 @@ class Transaction {
     };
   }
 
+  // verify a transaction
   static verifyTransaction(transaction, algorithm) {
     if (algorithm === SECP256K1_ALGORITHM) {
       let dataHash = ChainUtil.hash(transaction.outputs);
