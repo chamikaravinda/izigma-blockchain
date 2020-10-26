@@ -170,14 +170,18 @@ class Wallet {
     let startTime = 0;
 
     if (walletInputTs.length > 0) {
-      const recentInputT = walletInputTs.reduce((prev, current) =>
-        prev.input.timestamp > current.input.timestamp ? prev : current
-      );
+      let recentInputT = walletInputTs[0];
+      walletInputTs.forEach((transaction) => {
+        if (transaction.input.timestamp > recentInputT.input.timestamp) {
+          recentInputT = transaction;
+        }
+      });
 
-      balance = recentInputT.outputs.find(
-        (output) =>
-          JSON.stringify(output.address) === JSON.stringify(this.publicKey)
-      ).amount;
+      recentInputT.outputs.forEach((output) => {
+        if (JSON.stringify(output.address) === JSON.stringify(this.publicKey)) {
+          balance = output.amount;
+        }
+      });
       startTime = recentInputT.input.timestamp;
     }
 
@@ -193,7 +197,6 @@ class Wallet {
       }
     });
 
-    this.balance = balance;
     return balance;
   }
 
@@ -217,23 +220,27 @@ class Wallet {
       }
     });
 
-    const walletInputTs = transactions.filter(
+    let walletInputTs = transactions.filter(
       (transaction) =>
         JSON.stringify(transaction.sInput.address) ===
         JSON.stringify(this.publicKey)
     );
-
     let startTime = 0;
 
     if (walletInputTs.length > 0) {
-      const recentInputT = walletInputTs.reduce((prev, current) =>
-        prev.sInput.timestamp > current.sInput.timestamp ? prev : current
-      );
+      let recentInputT = walletInputTs[0];
 
-      balance = recentInputT.sOutputs.find(
-        (output) =>
-          JSON.stringify(output.address) === JSON.stringify(this.publicKey)
-      ).coin.amount;
+      walletInputTs.forEach((transaction) => {
+        if (transaction.sInput.timestamp > recentInputT.sInput.timestamp) {
+          recentInputT = transaction;
+        }
+      });
+
+      recentInputT.sOutputs.forEach((output) => {
+        if (JSON.stringify(output.address) === JSON.stringify(this.publicKey)) {
+          balance = output.coin.amount;
+        }
+      });
       startTime = recentInputT.sInput.timestamp;
     }
 
@@ -250,7 +257,6 @@ class Wallet {
     });
 
     let isIncludeInBalance = false;
-
     this.specialCoins.forEach((c) => {
       if (c.coinId === coin.coinId) {
         c.amount = balance;

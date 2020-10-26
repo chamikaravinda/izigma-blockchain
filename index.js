@@ -91,13 +91,23 @@ class IzigmaBlockchain {
       recipient,
       coin,
       this.chain,
-      this.specialCoinTransactioPool
+      this.specialCoinTransactionPool
     );
   }
 
   //create a new record to the record pool
   async createRecord(data) {
     return await this.wallet.createRecord(data, this.recordPool);
+  }
+
+  //calculate the wallet balance
+  async calculateBalance() {
+    return this.wallet.calculateBalance(this.chain);
+  }
+
+  //calculate special coin wallet balance
+  async calculateSpecialCoinBalance(coin) {
+    return this.wallet.calculateSpecialCoinBalance(this.chain, coin);
   }
 
   //get the public key of this node
@@ -182,7 +192,7 @@ class IzigmaBlockchain {
   }
 
   /* --------- Coin generator Functions ---------- */
-  // create and deploy a special coin
+  // create and deploy a special coin to the blockchain
   async generateSpecailCoinandDeploy(recivers, coinsForEachReciver, coinName) {
     return await this.coinGenerator.createAndDeployCoin(
       recivers,

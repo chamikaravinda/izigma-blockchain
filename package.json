@@ -1,18 +1,15 @@
 {
   "name": "izigma-blockchain",
-  "version": "1.8.0-SNAPSHOT",
+  "version": "1.9.0",
   "description": "This is a blockchain freamwork to build blockchain networks",
   "main": "\t",
   "scripts": {
     "test": "jest --coverage",
     "dev-test": "nodemon dev-test.js",
-    "performance-test": "jest performance.test.js"
+    "performance-test": "jest ./performance.test.js"
   },
   "jest": {
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "./performance.test.js"
-    ]
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",

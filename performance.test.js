@@ -1,7 +1,7 @@
 const IzigmaBlockchain = require("./index");
 const { SECP256K1_ALGORITHM } = require("./common-constant");
 
-describe("Wallet  - Operations on New Chain ", () => {
+describe.skip("Wallet  - Operations on New Chain ", () => {
   let chain;
 
   beforeAll(async () => {
@@ -88,7 +88,7 @@ describe("Wallet  - Operations on New Chain ", () => {
   });
 });
 
-describe("Wallet with SECP256K1 algorithm - Operations on New Chain ", () => {
+describe.skip("Wallet with SECP256K1 algorithm - Operations on New Chain ", () => {
   let chain2;
   beforeAll(async () => {
     chain2 = new IzigmaBlockchain();
