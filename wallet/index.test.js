@@ -294,6 +294,10 @@ describe("Wallet", () => {
             recipientBalance - subtractCoin.amount + addCoin.amount
           );
         });
+
+        it("Check the isContributed", () => {
+          expect(wallet.isContributed(bc)).toBeTruthy();
+        });
       });
     });
   });
@@ -456,7 +460,6 @@ describe("Wallet with Custome Keys", () => {
         await bc2.getChain();
         tp2.clear();
       });
-
 
       describe("and the sender sends another transaction to the recipien", () => {
         beforeAll(async () => {

@@ -310,6 +310,41 @@ class Wallet {
       return blockchainWallet;
     }
   }
+
+  //check the wallet created block in the transactions
+  isContributed(blockchain) {
+    let isContributed = false;
+    let transactions = [];
+
+    blockchain.chain.forEach((block) => {
+      if (Array.isArray(block.data)) {
+        block.data.forEach((transaction) => {
+          if (transaction.input) {
+            transactions.push(transaction);
+          }
+          if (transaction.sInput) {
+            transactions.push(transaction);
+          }
+        });
+      }
+    });
+
+    transactions.forEach((transaction) => {
+      if (transaction.input) {
+        if (transaction.input.address == this.publicKey) {
+          isContributed = true;
+        }
+      }
+
+      if (transaction.sInput) {
+        if (transaction.sInput.address == this.publicKey) {
+          isContributed = true;
+        }
+      }
+    });
+
+    return isContributed;
+  }
 }
 
 module.exports = Wallet;

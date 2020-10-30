@@ -45,8 +45,8 @@ class IzigmaBlockchain {
   }
 
   //check the validity of the chain with compairing to a another chain.
-  isValidChain(chain) {
-    this.chain.isValidChain(chain);
+  async isValidChain(chain) {
+    return await this.chain.isValidChain(chain);
   }
 
   //replace the current chain with a new chain
